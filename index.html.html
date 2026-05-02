@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>YuvaPath — तेरा रास्ता, तेरी मर्जी</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800&family=Hind:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --saffron: #FF6B00;
+    --deep: #0D0D0D;
+    --card: #161616;
+    --card2: #1E1E1E;
+    --accent: #FFB347;
+    --green: #00C896;
+    --text: #F0F0F0;
+    --muted: #888;
+    --border: #2A2A2A;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--deep);
+    color: var(--text);
+    font-family: 'Hind', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Background mesh */
+  body::before {
+    content: '';
+    position: fixed;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: 
+      radial-gradient(ellipse at 20% 20%, rgba(255,107,0,0.08) 0%, transparent 50%),
+      radial-gradient(ellipse at 80% 80%, rgba(0,200,150,0.05) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* Header */
+  header {
+    position: relative;
+    z-index: 10;
+    padding: 24px 20px 0;
+    text-align: center;
+  }
+
+  .logo {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 6px;
+  }
+
+  .logo-icon {
+    width: 40px;
+    height: 40px;
+    background: linear-gradient(135deg, var(--saffron), var(--accent));
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+  }
+
+  .logo-text {
+    font-family: 'Baloo 2', cursive;
+    font-size: 26px;
+    font-weight: 800;
+    background: linear-gradient(90deg, var(--saffron), var(--accent));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .tagline {
+    font-size: 13px;
+    color: var(--muted);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+
+  .status-bar {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(0,200,150,0.1);
+    border: 1px solid rgba(0,200,150,0.2);
+    border-radius: 20px;
+    padding: 4px 12px;
+    font-size: 12px;
+    color: var(--green);
+    margin-bottom: 20px;
+  }
+
+  .status-dot {
+    width: 7px;
+    height: 7px;
+    background: var(--green);
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(0.8); }
+  }
+
+  /* Quick Topics */
+  .quick-topics {
+    position: relative;
+    z-index: 10;
+    padding: 0 16px 12px;
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  .quick-topics::-webkit-scrollbar { display: none; }
+
+  .topic-chip {
+    flex-shrink: 0;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 7px 14px;
+    font-size: 13px;
+    color: var(--text);
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+    font-family: 'Hind', sans-serif;
+  }
+
+  .topic-chip:hover {
+    border-color: var(--saffron);
+    color: var(--saffron);
+    background: rgba(255,107,0,0.08);
+  }
+
+  /* Chat Area */
+  .chat-container {
+    position: relative;
+    z-index: 10;
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 0 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    min-height: 400px;
+    padding-bottom: 160px;
+  }
+
+  /* Welcome card */
+  .welcome-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 24px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .welcome-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--saffron), var(--accent), var(--green));
+  }
+
+  .welcome-emoji { font-size: 36px; margin-bottom: 10px; display: block; }
+
+  .welcome-card h2 {
+    font-family: 'Baloo 2', cursive;
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 8px;
+  }
+
+  .welcome-card p {
+    color: var(--muted);
+    font-size: 14px;
+    line-height: 1.7;
+  }
+
+  .welcome-card p span {
+    color: var(--accent);
+    font-weight: 600;
+  }
+
+  /* Message bubbles */
+  .msg {
+    display: flex;
+    gap: 10px;
+    animation: slideIn 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateY(16px) scale(0.97); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+
+  .msg.user { flex-direction: row-reverse; }
+
+  .avatar {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+  }
+
+  .avatar.bot {
+    background: linear-gradient(135deg, var(--saffron), var(--accent));
+  }
+
+  .avatar.user {
+    background: var(--card2);
+    border: 1px solid var(--border);
+    font-size: 13px;
+    color: var(--muted);
+  }
+
+  .bubble {
+    max-width: 85%;
+    padding: 12px 16px;
+    border-radius: 18px;
+    font-size: 14px;
+    line-height: 1.75;
+  }
+
+  .bubble.bot {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-top-left-radius: 4px;
+  }
+
+  .bubble.user {
+    background: linear-gradient(135deg, var(--saffron), #FF8C42);
+    color: #fff;
+    border-top-right-radius: 4px;
+  }
+
+  .bubble h3 {
+    font-family: 'Baloo 2', cursive;
+    font-size: 15px;
+    color: var(--accent);
+    margin-bottom: 8px;
+  }
+
+  .bubble ul {
+    padding-left: 18px;
+    margin: 8px 0;
+  }
+
+  .bubble li {
+    margin-bottom: 5px;
+  }
+
+  .bubble .highlight {
+    display: inline-block;
+    background: rgba(255,107,0,0.15);
+    border: 1px solid rgba(255,107,0,0.3);
+    border-radius: 6px;
+    padding: 2px 8px;
+    color: var(--accent);
+    font-weight: 600;
+    font-size: 13px;
+    margin: 2px 2px;
+  }
+
+  .bubble .green-tag {
+    display: inline-block;
+    background: rgba(0,200,150,0.12);
+    border: 1px solid rgba(0,200,150,0.25);
+    border-radius: 6px;
+    padding: 2px 8px;
+    color: var(--green);
+    font-size: 12px;
+    margin: 2px;
+  }
+
+  .idea-card {
+    background: rgba(255,107,0,0.06);
+    border: 1px solid rgba(255,107,0,0.2);
+    border-radius: 12px;
+    padding: 12px;
+    margin: 8px 0;
+  }
+
+  .idea-card strong {
+    color: var(--accent);
+    display: block;
+    margin-bottom: 4px;
+    font-family: 'Baloo 2', cursive;
+  }
+
+  .idea-card p {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+
+  /* Typing indicator */
+  .typing {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .typing-dots {
+    display: flex;
+    gap: 5px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    padding: 12px 16px;
+    border-radius: 18px;
+    border-top-left-radius: 4px;
+  }
+
+  .typing-dots span {
+    width: 7px;
+    height: 7px;
+    background: var(--saffron);
+    border-radius: 50%;
+    animation: bounce 1.2s infinite;
+  }
+
+  .typing-dots span:nth-child(2) { animation-delay: 0.2s; }
+  .typing-dots span:nth-child(3) { animation-delay: 0.4s; }
+
+  @keyframes bounce {
+    0%, 80%, 100% { transform: translateY(0); opacity: 0.4; }
+    40% { transform: translateY(-6px); opacity: 1; }
+  }
+
+  /* Input Area */
+  .input-wrap {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    background: linear-gradient(to top, var(--deep) 80%, transparent);
+    padding: 16px;
+  }
+
+  .input-inner {
+    max-width: 720px;
+    margin: 0 auto;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 10px 14px;
+    display: flex;
+    align-items: flex-end;
+    gap: 10px;
+    transition: border-color 0.2s;
+  }
+
+  .input-inner:focus-within {
+    border-color: var(--saffron);
+  }
+
+  textarea {
+    flex: 1;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: var(--text);
+    font-family: 'Hind', sans-serif;
+    font-size: 14px;
+    resize: none;
+    max-height: 120px;
+    min-height: 24px;
+    line-height: 1.6;
+  }
+
+  textarea::placeholder { color: var(--muted); }
+
+  .send-btn {
+    width: 38px;
+    height: 38px;
+    background: linear-gradient(135deg, var(--saffron), var(--accent));
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.15s, opacity 0.2s;
+    flex-shrink: 0;
+  }
+
+  .send-btn:hover { transform: scale(1.08); }
+  .send-btn:active { transform: scale(0.95); }
+  .send-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+
+  .send-btn svg { width: 18px; height: 18px; fill: white; }
+
+  .input-hint {
+    text-align: center;
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 8px;
+    opacity: 0.6;
+  }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+  @media (max-width: 480px) {
+    .logo-text { font-size: 22px; }
+    .bubble { max-width: 92%; font-size: 13px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <div class="logo-icon">🚀</div>
+    <span class="logo-text">YuvaPath</span>
+  </div>
+  <div class="tagline">India's Youth Career & Startup Guide</div>
+  <div class="status-bar">
+    <div class="status-dot"></div>
+    AI Agent Active — Hindi & English mein jawab deta hoon
+  </div>
+</header>
+
+<div class="quick-topics">
+  <div class="topic-chip" onclick="sendQuick('Bina paise ke startup kaise shuru karoon?')">💡 Zero Investment Startup</div>
+  <div class="topic-chip" onclick="sendQuick('Mujhe job nahi mil rahi, kya karoon?')">😔 Job Nahi Mil Rahi</div>
+  <div class="topic-chip" onclick="sendQuick('Freelancing kaise shuru karoon India mein?')">💻 Freelancing</div>
+  <div class="topic-chip" onclick="sendQuick('Ghar se kaunsa business kar sakta hoon?')">🏠 Ghar Se Business</div>
+  <div class="topic-chip" onclick="sendQuick('Skills kaunsi seekhoon jo future mein kaam aayein?')">🎯 Future Skills</div>
+  <div class="topic-chip" onclick="sendQuick('Sarkari naukri ke saath kuch side income kaise karoon?')">💰 Side Income</div>
+</div>
+
+<div class="chat-container" id="chat">
+  <div class="welcome-card">
+    <span class="welcome-emoji">🙏</span>
+    <h2>Yaar, baat kar mere se!</h2>
+    <p>
+      Main <span>YuvaPath AI</span> hoon — India ke urban youth ke liye bana ek career aur startup guide.<br><br>
+      Tujhe lagta hai job nahi milegi? Paas mein paisa nahi? Skills nahi? — <span>Sab ka jawab hoga.</span><br><br>
+      Kuch bhi pooch — Hindi mein, besharam hokar. Judge nahi karoonga. 😄
+    </p>
+  </div>
+</div>
+
+<div class="input-wrap">
+  <div class="input-inner">
+    <textarea id="userInput" placeholder="Yaar, pooch kuch bhi... jaise 'paas mein kuch nahi, kahan se shuru karoon?'" rows="1" onkeydown="handleKey(event)" oninput="autoResize(this)"></textarea>
+    <button class="send-btn" id="sendBtn" onclick="sendMessage()">
+      <svg viewBox="0 0 24 24"><path d="M2 21L23 12 2 3v7l15 2-15 2z"/></svg>
+    </button>
+  </div>
+  <div class="input-hint">YuvaPath • Indian Youth Career AI • Free Forever</div>
+</div>
+
+<script>
+const SYSTEM_PROMPT = `Tu "YuvaPath" hai — India ke urban youth (15-29 saal) ke liye ek dedicated career aur startup AI advisor. Tu ek dost ki tarah baat karta hai — judgemental nahi, practical haan.
+
+TERA FOCUS:
+- Youth unemployment India mein
+- Zero investment ya very low investment startups
+- Freelancing, gig economy, side hustles
+- Free skills sikhne ke resources
+- Government schemes jo youth ke liye hain
+- Online se paise kamaane ke real (not scammy) tarike
+- Mental strength — rejection ke baad kaise aage badhein
+
+TERA TONE:
+- Hinglish use kar (Hindi + thodi English) — jaise dost baat karta hai
+- Simple language — 10th class level vocabulary
+- Short paragraphs, bullet points use kar
+- Hamesha practical advice de — theory kam, action zyada
+- Numbers aur examples de — "3-4 ghante roz" jaisa concrete
+- Kabhi mat bol "main ek AI hoon" — seedha help kar
+
+STARTUP WITHOUT INVESTMENT IDEAS (yad rakh):
+1. Content Creation (YouTube/Reels/Shorts) — phone se shuru hota hai
+2. Freelancing — writing, design, video editing, social media management (Fiverr, Upwork, Internshala Freelance)
+3. Online Tutoring — padha ke paise kamao (Chegg, Vedantu, ya directly WhatsApp groups)
+4. Reselling — Meesho, GlowRoad pe bina stock rakhe becho
+5. Social Media Management — local businesses ke accounts handle karo
+6. Drop Shipping — bina inventory ke
+7. Print on Demand — t-shirts, mugs design karo
+8. Affiliate Marketing — Amazon, Flipkart affiliate
+9. Data Entry / Transcription — basic computer work
+10. Photography/Video for events — agar ache phone hai
+11. Local delivery partnership — Swiggy/Zomato ke saath
+12. Home-based food business — FSSAI license leke
+
+FREE SKILLS SEEKHNE KI JAGAH:
+- Google Digital Garage (free certificate)
+- Coursera (audit for free)
+- YouTube (sab kuch free)
+- NPTEL (IIT ke professors)
+- Swayam.gov.in (government platform, free)
+- LinkedIn Learning (1 month free)
+- Internshala Training
+
+GOVERNMENT SCHEMES BATA:
+- PMEGP (Prime Minister Employment Generation Programme) — loan for new business
+- Startup India — registration and benefits
+- Stand-Up India — SC/ST aur women ke liye
+- Mudra Loan — bina guarantee ke 10 lakh tak
+- NSDC schemes — skill development
+
+JAB KOI DEPRESSED HO:
+Empathy dikhao pehle. Phir practical steps. Kabhi mat bol "theek ho jaayega" — real steps do.
+
+Response FORMAT:
+- Hinglish mein likho
+- Emojis use karo sparingly
+- Bold/headers use karo readability ke liye
+- 3-5 actionable points always do
+- End mein ek follow-up question poochho`;
+
+let messages = [];
+let isTyping = false;
+
+async function sendMessage() {
+  const input = document.getElementById('userInput');
+  const text = input.value.trim();
+  if (!text || isTyping) return;
+
+  input.value = '';
+  autoResize(input);
+  addMsg(text, 'user');
+  messages.push({ role: 'user', content: text });
+
+  setTyping(true);
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1000,
+        system: SYSTEM_PROMPT,
+        messages: messages
+      })
+    });
+
+    const data = await res.json();
+    const reply = data.content?.map(b => b.text || '').join('') || 'Yaar, kuch technical problem aa gayi. Dobara try kar!';
+
+    messages.push({ role: 'assistant', content: reply });
+    setTyping(false);
+    addMsg(reply, 'bot');
+
+  } catch (err) {
+    setTyping(false);
+    addMsg('Yaar, network mein kuch problem hai. Ek baar refresh karke try kar! 🔄', 'bot');
+  }
+}
+
+function sendQuick(text) {
+  document.getElementById('userInput').value = text;
+  sendMessage();
+}
+
+function addMsg(text, role) {
+  const chat = document.getElementById('chat');
+
+  const wrap = document.createElement('div');
+  wrap.className = `msg ${role}`;
+
+  const avatar = document.createElement('div');
+  avatar.className = `avatar ${role}`;
+  avatar.textContent = role === 'bot' ? '🚀' : '👤';
+
+  const bubble = document.createElement('div');
+  bubble.className = `bubble ${role}`;
+  bubble.innerHTML = formatText(text);
+
+  wrap.appendChild(avatar);
+  wrap.appendChild(bubble);
+  chat.appendChild(wrap);
+
+  setTimeout(() => {
+    bubble.scrollIntoView({ behavior: 'smooth', block: 'end' });
+  }, 100);
+}
+
+function formatText(text) {
+  return text
+    .replace(/\*\*(.*?)\*\*/g, '<strong style="color:var(--accent)">$1</strong>')
+    .replace(/^### (.*?)$/gm, '<h3>$1</h3>')
+    .replace(/^## (.*?)$/gm, '<h3>$1</h3>')
+    .replace(/^# (.*?)$/gm, '<h3>$1</h3>')
+    .replace(/^- (.*?)$/gm, '<li>$1</li>')
+    .replace(/^(\d+)\. (.*?)$/gm, '<li>$2</li>')
+    .replace(/(<li>.*<\/li>\n?)+/g, m => `<ul>${m}</ul>`)
+    .replace(/\n\n/g, '</p><p>')
+    .replace(/\n/g, '<br>')
+    .replace(/^(.+)$/, '<p>$1</p>');
+}
+
+function setTyping(show) {
+  isTyping = show;
+  document.getElementById('sendBtn').disabled = show;
+
+  const existing = document.getElementById('typingIndicator');
+  if (existing) existing.remove();
+
+  if (show) {
+    const chat = document.getElementById('chat');
+    const wrap = document.createElement('div');
+    wrap.className = 'msg typing';
+    wrap.id = 'typingIndicator';
+    wrap.innerHTML = `
+      <div class="avatar bot">🚀</div>
+      <div class="typing-dots">
+        <span></span><span></span><span></span>
+      </div>`;
+    chat.appendChild(wrap);
+    wrap.scrollIntoView({ behavior: 'smooth', block: 'end' });
+  }
+}
+
+function handleKey(e) {
+  if (e.key === 'Enter' && !e.shiftKey) {
+    e.preventDefault();
+    sendMessage();
+  }
+}
+
+function autoResize(el) {
+  el.style.height = 'auto';
+  el.style.height = Math.min(el.scrollHeight, 120) + 'px';
+}
+</script>
+</body>
+</html>
